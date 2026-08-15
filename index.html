@@ -11,286 +11,64 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif;
-      background: #0c0a09;
-      color: #f5f0e8;
-      user-select: none;
-    }
-
-    .bg {
-      position: fixed;
-      inset: 0;
-      background: url('aangan-bg.jpg') center/cover no-repeat;
-      transform: scale(1.03);
-      transition: transform 12s ease;
-    }
-
+    html, body { height: 100%; overflow: hidden; font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif; background: #0c0a09; color: #f5f0e8; user-select: none; }
+    .bg { position: fixed; inset: 0; background: url('aangan-bg.jpg') center/cover no-repeat; transform: scale(1.03); transition: transform 12s ease; }
     .bg.settled { transform: scale(1); }
+    .vignette { position: fixed; inset: 0; background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.55) 100%); pointer-events: none; }
+    .grain { position: fixed; inset: 0; opacity: 0.04; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    .title-area { position: fixed; top: 12%; left: 50%; transform: translateX(-50%); text-align: center; z-index: 10; opacity: 0; animation: fadeInTitle 2.5s ease 0.6s forwards; }
+    .main-title { font-family: 'Noto Sans Devanagari', serif; font-size: clamp(2.8rem, 7vw, 4.8rem); font-weight: 500; letter-spacing: -0.02em; text-shadow: 0 4px 40px rgba(0,0,0,0.6); margin-bottom: 6px; }
+    .sub { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.05rem; opacity: 0.55; letter-spacing: 0.04em; }
+    .presence { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
+    .soft-light { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fbbf24; box-shadow: 0 0 18px 6px rgba(251, 191, 36, 0.35); opacity: 0; animation: breathe 8s ease-in-out infinite; }
+    @keyframes breathe { 0%, 100% { opacity: 0.15; transform: scale(0.9); } 50% { opacity: 0.55; transform: scale(1.15); } }
 
-    .vignette {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.55) 100%);
-      pointer-events: none;
-    }
+    .lit-diya { position: fixed; bottom: 28%; left: 50%; transform: translateX(-50%) scale(0.6); z-index: 15; opacity: 0; pointer-events: none; transition: opacity 1.2s ease, transform 1.2s ease; }
+    .lit-diya.visible { opacity: 1; transform: translateX(-50%) scale(1); }
+    .diya-base { width: 28px; height: 10px; background: linear-gradient(to bottom, #5c4033, #3d2b1f); border-radius: 50% 50% 40% 40%; position: relative; margin: 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+    .diya-base::before { content: ''; position: absolute; top: -3px; left: 50%; transform: translateX(-50%); width: 18px; height: 6px; background: #4a3225; border-radius: 50%; }
+    .flame { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 12px; height: 22px; }
+    .flame-inner { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 8px; height: 18px; background: radial-gradient(ellipse at bottom, #fff7ed 0%, #fbbf24 30%, #f59e0b 60%, transparent 80%); border-radius: 50% 50% 20% 20%; animation: flameFlicker 1.4s ease-in-out infinite; filter: blur(0.5px); }
+    .flame-outer { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 14px; height: 24px; background: radial-gradient(ellipse at bottom, rgba(251,191,36,0.6) 0%, rgba(245,158,11,0.3) 40%, transparent 70%); border-radius: 50% 50% 30% 30%; animation: flameFlicker 1.8s ease-in-out infinite reverse; filter: blur(2px); }
+    .diya-glow { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 80px; height: 40px; background: radial-gradient(ellipse, rgba(251,191,36,0.35) 0%, transparent 70%); animation: glowPulse 3s ease-in-out infinite; }
+    @keyframes flameFlicker { 0%, 100% { transform: translateX(-50%) scaleY(1) scaleX(1); opacity: 0.95; } 25% { transform: translateX(-48%) scaleY(1.08) scaleX(0.92); opacity: 1; } 50% { transform: translateX(-52%) scaleY(0.95) scaleX(1.05); opacity: 0.9; } 75% { transform: translateX(-49%) scaleY(1.05) scaleX(0.95); opacity: 1; } }
+    @keyframes glowPulse { 0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); } }
 
-    .grain {
-      position: fixed;
-      inset: 0;
-      opacity: 0.04;
-      pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
+    .diya-area { position: fixed; bottom: 18%; left: 50%; transform: translateX(-50%); z-index: 20; text-align: center; opacity: 0; animation: fadeIn 2s ease 1.4s forwards; }
+    .diya-btn { background: rgba(0,0,0,0.3); border: 1px solid rgba(251, 191, 36, 0.25); color: rgba(251, 191, 36, 0.9); padding: 12px 28px; border-radius: 999px; font-size: 0.9rem; font-weight: 400; letter-spacing: 0.06em; cursor: pointer; transition: all 0.4s ease; backdrop-filter: blur(10px); }
+    .diya-btn:hover { border-color: rgba(251, 191, 36, 0.5); background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
+    .diya-btn.lit { border-color: rgba(251, 191, 36, 0.55); background: rgba(251, 191, 36, 0.15); color: #fde68a; box-shadow: 0 0 24px rgba(251, 191, 36, 0.25); }
 
-    .title-area {
-      position: fixed;
-      top: 12%;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      z-index: 10;
-      opacity: 0;
-      animation: fadeInTitle 2.5s ease 0.6s forwards;
-    }
-
-    .main-title {
-      font-family: 'Noto Sans Devanagari', serif;
-      font-size: clamp(2.8rem, 7vw, 4.8rem);
-      font-weight: 500;
-      letter-spacing: -0.02em;
-      text-shadow: 0 4px 40px rgba(0,0,0,0.6);
-      margin-bottom: 6px;
-    }
-
-    .sub {
-      font-family: 'Instrument Serif', serif;
-      font-style: italic;
-      font-size: 1.05rem;
-      opacity: 0.55;
-      letter-spacing: 0.04em;
-    }
-
-    .presence {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    .soft-light {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #fbbf24;
-      box-shadow: 0 0 18px 6px rgba(251, 191, 36, 0.35);
-      opacity: 0;
-      animation: breathe 8s ease-in-out infinite;
-    }
-
-    @keyframes breathe {
-      0%, 100% { opacity: 0.15; transform: scale(0.9); }
-      50% { opacity: 0.55; transform: scale(1.15); }
-    }
-
-    .diya-area {
-      position: fixed;
-      bottom: 22%;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-      text-align: center;
-      opacity: 0;
-      animation: fadeIn 2s ease 1.4s forwards;
-    }
-
-    .diya-btn {
-      background: rgba(0,0,0,0.25);
-      border: 1px solid rgba(251, 191, 36, 0.25);
-      color: rgba(251, 191, 36, 0.85);
-      padding: 12px 28px;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 400;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      backdrop-filter: blur(8px);
-    }
-
-    .diya-btn:hover {
-      border-color: rgba(251, 191, 36, 0.5);
-      background: rgba(251, 191, 36, 0.08);
-      color: #fbbf24;
-    }
-
-    .diya-btn.lit {
-      border-color: rgba(251, 191, 36, 0.6);
-      background: rgba(251, 191, 36, 0.12);
-      color: #fde68a;
-      box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);
-    }
-
-    .diya-flame {
-      display: inline-block;
-      width: 10px;
-      height: 14px;
-      margin-right: 8px;
-      vertical-align: middle;
-      background: radial-gradient(ellipse at bottom, #fbbf24 0%, #f59e0b 40%, transparent 70%);
-      border-radius: 50% 50% 20% 20%;
-      opacity: 0;
-      transition: opacity 0.6s;
-      animation: flicker 1.8s ease-in-out infinite;
-    }
-
-    .diya-btn.lit .diya-flame { opacity: 1; }
-
-    @keyframes flicker {
-      0%, 100% { transform: scaleY(1) scaleX(1); opacity: 0.9; }
-      50% { transform: scaleY(1.15) scaleX(0.9); opacity: 1; }
-    }
-
-    .thought-area {
-      position: fixed;
-      bottom: 8%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(420px, 90vw);
-      z-index: 20;
-      opacity: 0;
-      animation: fadeIn 2s ease 2s forwards;
-    }
-
-    .thought-input {
-      width: 100%;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 14px 18px;
-      color: #f5f0e8;
-      font-size: 0.95rem;
-      font-family: inherit;
-      outline: none;
-      resize: none;
-      backdrop-filter: blur(12px);
-      transition: border-color 0.3s;
-      line-height: 1.5;
-    }
-
-    .thought-input::placeholder {
-      color: rgba(245, 240, 232, 0.35);
-    }
-
-    .thought-input:focus {
-      border-color: rgba(251, 191, 36, 0.3);
-    }
-
-    .thought-hint {
-      font-size: 0.72rem;
-      opacity: 0.35;
-      text-align: center;
-      margin-top: 8px;
-      letter-spacing: 0.03em;
-    }
-
-    .thoughts {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 8;
-      overflow: hidden;
-    }
-
-    .floating-thought {
-      position: absolute;
-      max-width: 260px;
-      padding: 10px 14px;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      font-size: 0.82rem;
-      line-height: 1.45;
-      color: rgba(245, 240, 232, 0.75);
-      opacity: 0;
-      animation: thoughtAppear 12s ease forwards;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    @keyframes thoughtAppear {
-      0% { opacity: 0; transform: translateY(12px); }
-      8% { opacity: 0.7; transform: translateY(0); }
-      80% { opacity: 0.55; }
-      100% { opacity: 0; transform: translateY(-8px); }
-    }
-
-    .footer-note {
-      position: fixed;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.7rem;
-      opacity: 0.25;
-      letter-spacing: 0.08em;
-      z-index: 10;
-    }
-
-    .sound-toggle {
-      position: fixed;
-      top: 24px;
-      right: 24px;
-      z-index: 30;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(245, 240, 232, 0.6);
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-      font-size: 16px;
-    }
-
-    .sound-toggle:hover {
-      background: rgba(0,0,0,0.5);
-      color: #f5f0e8;
-    }
-
-    .sound-toggle.on {
-      color: #fbbf24;
-      border-color: rgba(251, 191, 36, 0.3);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-
-    @keyframes fadeInTitle {
-      from { opacity: 0; transform: translateX(-50%) translateY(16px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-
-    @media (max-width: 600px) {
-      .main-title { font-size: 2.6rem; }
-      .diya-area { bottom: 26%; }
-      .thought-area { bottom: 7%; }
-      .sound-toggle { top: 16px; right: 16px; }
-    }
+    .thought-area { position: fixed; bottom: 6%; left: 50%; transform: translateX(-50%); width: min(420px, 90vw); z-index: 20; opacity: 0; animation: fadeIn 2s ease 2s forwards; }
+    .thought-input { width: 100%; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 14px 18px; color: #f5f0e8; font-size: 0.95rem; font-family: inherit; outline: none; resize: none; backdrop-filter: blur(12px); transition: border-color 0.3s; line-height: 1.5; }
+    .thought-input::placeholder { color: rgba(245, 240, 232, 0.35); }
+    .thought-input:focus { border-color: rgba(251, 191, 36, 0.3); }
+    .thought-hint { font-size: 0.72rem; opacity: 0.35; text-align: center; margin-top: 8px; letter-spacing: 0.03em; }
+    .thoughts { position: fixed; inset: 0; pointer-events: none; z-index: 8; overflow: hidden; }
+    .floating-thought { position: absolute; max-width: 260px; padding: 10px 14px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border-radius: 12px; font-size: 0.82rem; line-height: 1.45; color: rgba(245, 240, 232, 0.75); opacity: 0; animation: thoughtAppear 12s ease forwards; border: 1px solid rgba(255,255,255,0.05); }
+    @keyframes thoughtAppear { 0% { opacity: 0; transform: translateY(12px); } 8% { opacity: 0.7; transform: translateY(0); } 80% { opacity: 0.55; } 100% { opacity: 0; transform: translateY(-8px); } }
+    .footer-note { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.08em; z-index: 10; }
+    .sound-toggle { position: fixed; top: 24px; right: 24px; z-index: 30; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); color: rgba(245, 240, 232, 0.6); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; font-size: 16px; }
+    .sound-toggle:hover { background: rgba(0,0,0,0.5); color: #f5f0e8; }
+    .sound-toggle.on { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    @keyframes fadeInTitle { from { opacity: 0; transform: translateX(-50%) translateY(16px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    @media (max-width: 600px) { .main-title { font-size: 2.6rem; } .diya-area { bottom: 22%; } .thought-area { bottom: 5%; } .lit-diya { bottom: 32%; } .sound-toggle { top: 16px; right: 16px; } }
   </style>
 </head>
 <body>
   <div class="bg" id="bg"></div>
   <div class="vignette"></div>
   <div class="grain"></div>
+
+  <div class="lit-diya" id="litDiya">
+    <div class="diya-glow"></div>
+    <div class="flame">
+      <div class="flame-outer"></div>
+      <div class="flame-inner"></div>
+    </div>
+    <div class="diya-base"></div>
+  </div>
 
   <button class="sound-toggle" id="soundToggle" title="Toggle soft sounds">
     <span id="soundIcon">🔇</span>
@@ -306,199 +84,90 @@
 
   <div class="diya-area">
     <button class="diya-btn" id="diyaBtn">
-      <span class="diya-flame"></span>
       <span id="diyaText">light a diya</span>
     </button>
   </div>
 
   <div class="thought-area">
-    <textarea
-      class="thought-input"
-      id="thoughtInput"
-      rows="2"
-      maxlength="140"
-      placeholder="leave a quiet thought here..."
-    ></textarea>
+    <textarea class="thought-input" id="thoughtInput" rows="2" maxlength="140" placeholder="leave a quiet thought here..."></textarea>
     <div class="thought-hint">anonymous · disappears after a while</div>
   </div>
 
   <div class="footer-note">you are not alone here</div>
 
   <script>
-    // Soft ambient + distant temple bells using Web Audio (no external files needed)
-    let audioCtx = null;
-    let ambientNodes = null;
-    let soundOn = false;
-    let bellTimer = null;
-
+    let audioCtx = null, ambientNodes = null, soundOn = false, bellTimer = null;
     const soundToggle = document.getElementById('soundToggle');
     const soundIcon = document.getElementById('soundIcon');
 
-    function initAudio() {
-      if (audioCtx) return;
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
+    function initAudio() { if (audioCtx) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
     function createSoftAmbient() {
       if (!audioCtx) return;
-
-      const gain = audioCtx.createGain();
-      gain.gain.value = 0.045;
-      gain.connect(audioCtx.destination);
-
-      const osc = audioCtx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.value = 65;
-      const oscGain = audioCtx.createGain();
-      oscGain.gain.value = 0.3;
-      osc.connect(oscGain);
-      oscGain.connect(gain);
-      osc.start();
-
-      const osc2 = audioCtx.createOscillator();
-      osc2.type = 'sine';
-      osc2.frequency.value = 98;
-      const osc2Gain = audioCtx.createGain();
-      osc2Gain.gain.value = 0.12;
-      osc2.connect(osc2Gain);
-      osc2Gain.connect(gain);
-      osc2.start();
-
-      const bufferSize = 2 * audioCtx.sampleRate;
-      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.4;
-      }
-      const noise = audioCtx.createBufferSource();
-      noise.buffer = noiseBuffer;
-      noise.loop = true;
-
-      const noiseFilter = audioCtx.createBiquadFilter();
-      noiseFilter.type = 'bandpass';
-      noiseFilter.frequency.value = 1800;
-      noiseFilter.Q.value = 0.6;
-
-      const noiseGain = audioCtx.createGain();
-      noiseGain.gain.value = 0.08;
-
-      noise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(gain);
-      noise.start();
-
+      const gain = audioCtx.createGain(); gain.gain.value = 0.045; gain.connect(audioCtx.destination);
+      const osc = audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.value = 65;
+      const oscGain = audioCtx.createGain(); oscGain.gain.value = 0.3; osc.connect(oscGain); oscGain.connect(gain); osc.start();
+      const osc2 = audioCtx.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 98;
+      const osc2Gain = audioCtx.createGain(); osc2Gain.gain.value = 0.12; osc2.connect(osc2Gain); osc2Gain.connect(gain); osc2.start();
+      const bufferSize = 2 * audioCtx.sampleRate; const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = noiseBuffer.getChannelData(0); for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
+      const noise = audioCtx.createBufferSource(); noise.buffer = noiseBuffer; noise.loop = true;
+      const noiseFilter = audioCtx.createBiquadFilter(); noiseFilter.type = 'bandpass'; noiseFilter.frequency.value = 1800; noiseFilter.Q.value = 0.6;
+      const noiseGain = audioCtx.createGain(); noiseGain.gain.value = 0.08;
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(gain); noise.start();
       ambientNodes = { gain, osc, osc2, noise };
     }
 
     function playDistantBell() {
       if (!audioCtx || !soundOn) return;
-
       const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(420 + Math.random() * 80, now);
-
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.09, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 3.8);
-
-      const osc2 = audioCtx.createOscillator();
-      const gain2 = audioCtx.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(630 + Math.random() * 40, now);
-      gain2.gain.setValueAtTime(0, now);
-      gain2.gain.linearRampToValueAtTime(0.035, now + 0.01);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc2.connect(gain2);
-      gain2.connect(audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + 4);
-      osc2.start(now);
-      osc2.stop(now + 3);
+      const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+      osc.type = 'sine'; osc.frequency.setValueAtTime(420 + Math.random() * 80, now);
+      gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.09, now + 0.02); gain.gain.exponentialRampToValueAtTime(0.001, now + 3.8);
+      const osc2 = audioCtx.createOscillator(); const gain2 = audioCtx.createGain();
+      osc2.type = 'sine'; osc2.frequency.setValueAtTime(630 + Math.random() * 40, now);
+      gain2.gain.setValueAtTime(0, now); gain2.gain.linearRampToValueAtTime(0.035, now + 0.01); gain2.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
+      osc.connect(gain); gain.connect(audioCtx.destination); osc2.connect(gain2); gain2.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 4); osc2.start(now); osc2.stop(now + 3);
     }
 
     function startBells() {
       stopBells();
-      setTimeout(() => {
-        if (soundOn) playDistantBell();
-      }, 4000 + Math.random() * 3000);
-
-      bellTimer = setInterval(() => {
-        if (soundOn && Math.random() > 0.35) {
-          playDistantBell();
-        }
-      }, 14000 + Math.random() * 18000);
+      setTimeout(() => { if (soundOn) playDistantBell(); }, 4000 + Math.random() * 3000);
+      bellTimer = setInterval(() => { if (soundOn && Math.random() > 0.35) playDistantBell(); }, 14000 + Math.random() * 18000);
     }
-
-    function stopBells() {
-      if (bellTimer) {
-        clearInterval(bellTimer);
-        bellTimer = null;
-      }
-    }
+    function stopBells() { if (bellTimer) { clearInterval(bellTimer); bellTimer = null; } }
 
     function enableSound() {
-      initAudio();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (!ambientNodes) createSoftAmbient();
-      else ambientNodes.gain.gain.value = 0.045;
-      soundOn = true;
-      soundIcon.textContent = '🔊';
-      soundToggle.classList.add('on');
-      startBells();
+      initAudio(); if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!ambientNodes) createSoftAmbient(); else ambientNodes.gain.gain.value = 0.045;
+      soundOn = true; soundIcon.textContent = '🔊'; soundToggle.classList.add('on'); startBells();
     }
-
     function disableSound() {
-      soundOn = false;
-      soundIcon.textContent = '🔇';
-      soundToggle.classList.remove('on');
-      stopBells();
+      soundOn = false; soundIcon.textContent = '🔇'; soundToggle.classList.remove('on'); stopBells();
       if (ambientNodes) ambientNodes.gain.gain.value = 0;
     }
+    soundToggle.addEventListener('click', () => { if (soundOn) disableSound(); else enableSound(); });
 
-    soundToggle.addEventListener('click', () => {
-      if (soundOn) disableSound();
-      else enableSound();
-    });
-
-    // Presence lights
     const presence = document.getElementById('presence');
-    const positions = [
-      { top: '58%', left: '22%' },
-      { top: '62%', left: '78%' },
-      { top: '48%', left: '15%' },
-      { top: '70%', left: '68%' },
-      { top: '55%', left: '85%' },
-      { top: '65%', left: '12%' },
-    ];
-
-    positions.forEach((pos, i) => {
-      const light = document.createElement('div');
-      light.className = 'soft-light';
-      light.style.top = pos.top;
-      light.style.left = pos.left;
-      light.style.animationDelay = `${i * 1.4}s`;
-      presence.appendChild(light);
+    [{ top: '58%', left: '22%' }, { top: '62%', left: '78%' }, { top: '48%', left: '15%' }, { top: '70%', left: '68%' }, { top: '55%', left: '85%' }, { top: '65%', left: '12%' }].forEach((pos, i) => {
+      const light = document.createElement('div'); light.className = 'soft-light'; light.style.top = pos.top; light.style.left = pos.left; light.style.animationDelay = (i * 1.4) + 's'; presence.appendChild(light);
     });
 
-    // Diya
     const diyaBtn = document.getElementById('diyaBtn');
     const diyaText = document.getElementById('diyaText');
+    const litDiya = document.getElementById('litDiya');
     let diyaLit = localStorage.getItem('aangan-diya') === 'true';
 
     function updateDiya() {
       if (diyaLit) {
         diyaBtn.classList.add('lit');
         diyaText.textContent = 'your diya is lit';
+        litDiya.classList.add('visible');
       } else {
         diyaBtn.classList.remove('lit');
         diyaText.textContent = 'light a diya';
+        litDiya.classList.remove('visible');
       }
     }
     updateDiya();
@@ -509,40 +178,20 @@
       updateDiya();
     });
 
-    // Thoughts
     const thoughtInput = document.getElementById('thoughtInput');
     const thoughtsContainer = document.getElementById('thoughts');
     let savedThoughts = JSON.parse(localStorage.getItem('aangan-thoughts') || '[]');
 
     function showThought(text, isNew = false) {
-      const el = document.createElement('div');
-      el.className = 'floating-thought';
-      el.textContent = text;
-      const top = 28 + Math.random() * 35;
-      const left = 8 + Math.random() * 70;
-      el.style.top = top + '%';
-      el.style.left = left + '%';
+      const el = document.createElement('div'); el.className = 'floating-thought'; el.textContent = text;
+      el.style.top = (28 + Math.random() * 35) + '%'; el.style.left = (8 + Math.random() * 70) + '%';
       if (isNew) el.style.animationDuration = '14s';
-      thoughtsContainer.appendChild(el);
-      setTimeout(() => el.remove(), 14000);
+      thoughtsContainer.appendChild(el); setTimeout(() => el.remove(), 14000);
     }
 
-    if (savedThoughts.length === 0) {
-      savedThoughts = [
-        "just sitting for a bit",
-        "the evening feels soft today",
-        "missing home a little",
-        "this is enough for now"
-      ];
-    }
-
-    setTimeout(() => {
-      if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]);
-    }, 4000);
-
-    setInterval(() => {
-      if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]);
-    }, 16000);
+    if (savedThoughts.length === 0) savedThoughts = ["just sitting for a bit", "the evening feels soft today", "missing home a little", "this is enough for now"];
+    setTimeout(() => { if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]); }, 4000);
+    setInterval(() => { if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]); }, 16000);
 
     thoughtInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -553,23 +202,11 @@
         savedThoughts.unshift(text);
         if (savedThoughts.length > 12) savedThoughts.pop();
         localStorage.setItem('aangan-thoughts', JSON.stringify(savedThoughts));
-        thoughtInput.value = '';
-        thoughtInput.blur();
+        thoughtInput.value = ''; thoughtInput.blur();
       }
     });
 
-    setTimeout(() => {
-      document.getElementById('bg').classList.add('settled');
-    }, 800);
-
-    setInterval(() => {
-      const lights = document.querySelectorAll('.soft-light');
-      lights.forEach(l => {
-        if (Math.random() > 0.7) {
-          l.style.animationDuration = (6 + Math.random() * 6) + 's';
-        }
-      });
-    }, 12000);
+    setTimeout(() => document.getElementById('bg').classList.add('settled'), 800);
   </script>
 </body>
 </html>
