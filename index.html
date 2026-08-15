@@ -24,7 +24,7 @@
     .bg {
       position: fixed;
       inset: 0;
-      background-image: url('aangan-bg.jpg');
+      background-image: url('aangan-bg-desktop.jpg');
       background-size: cover;
       background-position: center 45%;
       background-repeat: no-repeat;
@@ -35,21 +35,16 @@
     .bg.settled { transform: scale(1); }
     .bg.raining { filter: brightness(0.92) saturate(0.9); }
 
-    /* Better framing for the wider long-shot on mobile */
+    /* Mobile: use the 9:16 portrait version */
     @media (max-width: 700px) {
       .bg {
-        background-position: center 42%;
+        background-image: url('aangan-bg-mobile.jpg');
+        background-position: center center;
         background-size: cover;
-        transform: scale(1.06);
+        transform: scale(1.03);
       }
       .bg.settled {
-        transform: scale(1.01);
-      }
-    }
-
-    @media (max-width: 420px) {
-      .bg {
-        background-position: center 40%;
+        transform: scale(1);
       }
     }
 
