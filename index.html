@@ -34,6 +34,7 @@
     .sound-toggle { position: fixed; top: 24px; right: 24px; z-index: 30; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); color: rgba(245, 240, 232, 0.6); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; font-size: 16px; }
     .sound-toggle:hover { background: rgba(0,0,0,0.5); color: #f5f0e8; }
     .sound-toggle.on { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
+    #yt-player { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; bottom: 0; left: 0; z-index: -1; }
     @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     @keyframes fadeInTitle { from { opacity: 0; transform: translateX(-50%) translateY(16px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     @media (max-width: 600px) { .main-title { font-size: 2.6rem; } .thought-area { bottom: 9%; } .sound-toggle { top: 16px; right: 16px; } }
@@ -43,8 +44,9 @@
   <div class="bg" id="bg"></div>
   <div class="vignette"></div>
   <div class="grain"></div>
+  <div id="yt-player"></div>
 
-  <button class="sound-toggle" id="soundToggle" title="Toggle soft sounds">
+  <button class="sound-toggle" id="soundToggle" title="Play soft music">
     <span id="soundIcon">🔇</span>
   </button>
 
@@ -64,62 +66,79 @@
   <div class="footer-note">you are not alone here</div>
 
   <script>
-    let audioCtx = null, ambientNodes = null, soundOn = false, bellTimer = null;
+    let player = null;
+    let soundOn = false;
+
     const soundToggle = document.getElementById('soundToggle');
     const soundIcon = document.getElementById('soundIcon');
 
-    function initAudio() { if (audioCtx) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
 
-    function createSoftAmbient() {
-      if (!audioCtx) return;
-      const gain = audioCtx.createGain(); gain.gain.value = 0.045; gain.connect(audioCtx.destination);
-      const osc = audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.value = 65;
-      const oscGain = audioCtx.createGain(); oscGain.gain.value = 0.3; osc.connect(oscGain); oscGain.connect(gain); osc.start();
-      const osc2 = audioCtx.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 98;
-      const osc2Gain = audioCtx.createGain(); osc2Gain.gain.value = 0.12; osc2.connect(osc2Gain); osc2Gain.connect(gain); osc2.start();
-      const bufferSize = 2 * audioCtx.sampleRate; const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = noiseBuffer.getChannelData(0); for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
-      const noise = audioCtx.createBufferSource(); noise.buffer = noiseBuffer; noise.loop = true;
-      const noiseFilter = audioCtx.createBiquadFilter(); noiseFilter.type = 'bandpass'; noiseFilter.frequency.value = 1800; noiseFilter.Q.value = 0.6;
-      const noiseGain = audioCtx.createGain(); noiseGain.gain.value = 0.08;
-      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(gain); noise.start();
-      ambientNodes = { gain, osc, osc2, noise };
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('yt-player', {
+        height: '1',
+        width: '1',
+        videoId: 'uAJ9Qv7VqhQ',
+        playerVars: {
+          listType: 'playlist',
+          list: 'PLgsOOZkvTXhcwYc8xK6zLeF_rYSIuUPz4',
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          modestbranding: 1,
+          rel: 0,
+          loop: 1,
+          playsinline: 1
+        },
+        events: {
+          onStateChange: function(event) {
+            if (event.data === YT.PlayerState.ENDED && soundOn) {
+              player.playVideo();
+            }
+          }
+        }
+      });
     }
-
-    function playDistantBell() {
-      if (!audioCtx || !soundOn) return;
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-      osc.type = 'sine'; osc.frequency.setValueAtTime(420 + Math.random() * 80, now);
-      gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.09, now + 0.02); gain.gain.exponentialRampToValueAtTime(0.001, now + 3.8);
-      const osc2 = audioCtx.createOscillator(); const gain2 = audioCtx.createGain();
-      osc2.type = 'sine'; osc2.frequency.setValueAtTime(630 + Math.random() * 40, now);
-      gain2.gain.setValueAtTime(0, now); gain2.gain.linearRampToValueAtTime(0.035, now + 0.01); gain2.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
-      osc.connect(gain); gain.connect(audioCtx.destination); osc2.connect(gain2); gain2.connect(audioCtx.destination);
-      osc.start(now); osc.stop(now + 4); osc2.start(now); osc2.stop(now + 3);
-    }
-
-    function startBells() {
-      stopBells();
-      setTimeout(() => { if (soundOn) playDistantBell(); }, 4000 + Math.random() * 3000);
-      bellTimer = setInterval(() => { if (soundOn && Math.random() > 0.35) playDistantBell(); }, 14000 + Math.random() * 18000);
-    }
-    function stopBells() { if (bellTimer) { clearInterval(bellTimer); bellTimer = null; } }
+    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 
     function enableSound() {
-      initAudio(); if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (!ambientNodes) createSoftAmbient(); else ambientNodes.gain.gain.value = 0.045;
-      soundOn = true; soundIcon.textContent = '🔊'; soundToggle.classList.add('on'); startBells();
+      if (!player || typeof player.playVideo !== 'function') {
+        setTimeout(enableSound, 400);
+        return;
+      }
+      soundOn = true;
+      soundIcon.textContent = '🔊';
+      soundToggle.classList.add('on');
+      player.unMute();
+      player.setVolume(45);
+      player.playVideo();
     }
+
     function disableSound() {
-      soundOn = false; soundIcon.textContent = '🔇'; soundToggle.classList.remove('on'); stopBells();
-      if (ambientNodes) ambientNodes.gain.gain.value = 0;
+      soundOn = false;
+      soundIcon.textContent = '🔇';
+      soundToggle.classList.remove('on');
+      if (player && typeof player.pauseVideo === 'function') {
+        player.pauseVideo();
+      }
     }
-    soundToggle.addEventListener('click', () => { if (soundOn) disableSound(); else enableSound(); });
+
+    soundToggle.addEventListener('click', () => {
+      if (soundOn) disableSound();
+      else enableSound();
+    });
 
     const presence = document.getElementById('presence');
     [{ top: '58%', left: '22%' }, { top: '62%', left: '78%' }, { top: '48%', left: '15%' }, { top: '70%', left: '68%' }, { top: '55%', left: '85%' }, { top: '65%', left: '12%' }].forEach((pos, i) => {
-      const light = document.createElement('div'); light.className = 'soft-light'; light.style.top = pos.top; light.style.left = pos.left; light.style.animationDelay = (i * 1.4) + 's'; presence.appendChild(light);
+      const light = document.createElement('div');
+      light.className = 'soft-light';
+      light.style.top = pos.top;
+      light.style.left = pos.left;
+      light.style.animationDelay = (i * 1.4) + 's';
+      presence.appendChild(light);
     });
 
     const thoughtInput = document.getElementById('thoughtInput');
@@ -127,15 +146,27 @@
     let savedThoughts = JSON.parse(localStorage.getItem('aangan-thoughts') || '[]');
 
     function showThought(text, isNew = false) {
-      const el = document.createElement('div'); el.className = 'floating-thought'; el.textContent = text;
-      el.style.top = (28 + Math.random() * 35) + '%'; el.style.left = (8 + Math.random() * 70) + '%';
+      const el = document.createElement('div');
+      el.className = 'floating-thought';
+      el.textContent = text;
+      el.style.top = (28 + Math.random() * 35) + '%';
+      el.style.left = (8 + Math.random() * 70) + '%';
       if (isNew) el.style.animationDuration = '14s';
-      thoughtsContainer.appendChild(el); setTimeout(() => el.remove(), 14000);
+      thoughtsContainer.appendChild(el);
+      setTimeout(() => el.remove(), 14000);
     }
 
-    if (savedThoughts.length === 0) savedThoughts = ["just sitting for a bit", "the evening feels soft today", "missing home a little", "this is enough for now"];
-    setTimeout(() => { if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]); }, 4000);
-    setInterval(() => { if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]); }, 16000);
+    if (savedThoughts.length === 0) {
+      savedThoughts = ["just sitting for a bit", "the evening feels soft today", "missing home a little", "this is enough for now"];
+    }
+
+    setTimeout(() => {
+      if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]);
+    }, 4000);
+
+    setInterval(() => {
+      if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]);
+    }, 16000);
 
     thoughtInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -146,11 +177,14 @@
         savedThoughts.unshift(text);
         if (savedThoughts.length > 12) savedThoughts.pop();
         localStorage.setItem('aangan-thoughts', JSON.stringify(savedThoughts));
-        thoughtInput.value = ''; thoughtInput.blur();
+        thoughtInput.value = '';
+        thoughtInput.blur();
       }
     });
 
-    setTimeout(() => document.getElementById('bg').classList.add('settled'), 800);
+    setTimeout(() => {
+      document.getElementById('bg').classList.add('settled');
+    }, 800);
 
     setInterval(() => {
       document.querySelectorAll('.soft-light').forEach(l => {
