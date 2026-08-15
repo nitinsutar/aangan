@@ -22,53 +22,27 @@
     .presence { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
     .soft-light { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fbbf24; box-shadow: 0 0 18px 6px rgba(251, 191, 36, 0.35); opacity: 0; animation: breathe 8s ease-in-out infinite; }
     @keyframes breathe { 0%, 100% { opacity: 0.15; transform: scale(0.9); } 50% { opacity: 0.55; transform: scale(1.15); } }
-
-    .lit-diya { position: fixed; bottom: 28%; left: 50%; transform: translateX(-50%) scale(0.6); z-index: 15; opacity: 0; pointer-events: none; transition: opacity 1.2s ease, transform 1.2s ease; }
-    .lit-diya.visible { opacity: 1; transform: translateX(-50%) scale(1); }
-    .diya-base { width: 28px; height: 10px; background: linear-gradient(to bottom, #5c4033, #3d2b1f); border-radius: 50% 50% 40% 40%; position: relative; margin: 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-    .diya-base::before { content: ''; position: absolute; top: -3px; left: 50%; transform: translateX(-50%); width: 18px; height: 6px; background: #4a3225; border-radius: 50%; }
-    .flame { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 12px; height: 22px; }
-    .flame-inner { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 8px; height: 18px; background: radial-gradient(ellipse at bottom, #fff7ed 0%, #fbbf24 30%, #f59e0b 60%, transparent 80%); border-radius: 50% 50% 20% 20%; animation: flameFlicker 1.4s ease-in-out infinite; filter: blur(0.5px); }
-    .flame-outer { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 14px; height: 24px; background: radial-gradient(ellipse at bottom, rgba(251,191,36,0.6) 0%, rgba(245,158,11,0.3) 40%, transparent 70%); border-radius: 50% 50% 30% 30%; animation: flameFlicker 1.8s ease-in-out infinite reverse; filter: blur(2px); }
-    .diya-glow { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 80px; height: 40px; background: radial-gradient(ellipse, rgba(251,191,36,0.35) 0%, transparent 70%); animation: glowPulse 3s ease-in-out infinite; }
-    @keyframes flameFlicker { 0%, 100% { transform: translateX(-50%) scaleY(1) scaleX(1); opacity: 0.95; } 25% { transform: translateX(-48%) scaleY(1.08) scaleX(0.92); opacity: 1; } 50% { transform: translateX(-52%) scaleY(0.95) scaleX(1.05); opacity: 0.9; } 75% { transform: translateX(-49%) scaleY(1.05) scaleX(0.95); opacity: 1; } }
-    @keyframes glowPulse { 0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); } }
-
-    .diya-area { position: fixed; bottom: 18%; left: 50%; transform: translateX(-50%); z-index: 20; text-align: center; opacity: 0; animation: fadeIn 2s ease 1.4s forwards; }
-    .diya-btn { background: rgba(0,0,0,0.3); border: 1px solid rgba(251, 191, 36, 0.25); color: rgba(251, 191, 36, 0.9); padding: 12px 28px; border-radius: 999px; font-size: 0.9rem; font-weight: 400; letter-spacing: 0.06em; cursor: pointer; transition: all 0.4s ease; backdrop-filter: blur(10px); }
-    .diya-btn:hover { border-color: rgba(251, 191, 36, 0.5); background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
-    .diya-btn.lit { border-color: rgba(251, 191, 36, 0.55); background: rgba(251, 191, 36, 0.15); color: #fde68a; box-shadow: 0 0 24px rgba(251, 191, 36, 0.25); }
-
-    .thought-area { position: fixed; bottom: 6%; left: 50%; transform: translateX(-50%); width: min(420px, 90vw); z-index: 20; opacity: 0; animation: fadeIn 2s ease 2s forwards; }
-    .thought-input { width: 100%; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 14px 18px; color: #f5f0e8; font-size: 0.95rem; font-family: inherit; outline: none; resize: none; backdrop-filter: blur(12px); transition: border-color 0.3s; line-height: 1.5; }
+    .thought-area { position: fixed; bottom: 11%; left: 50%; transform: translateX(-50%); width: min(400px, 88vw); z-index: 20; opacity: 0; animation: fadeIn 2s ease 1.6s forwards; }
+    .thought-input { width: 100%; background: rgba(0,0,0,0.38); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; padding: 14px 18px; color: #f5f0e8; font-size: 0.95rem; font-family: inherit; outline: none; resize: none; backdrop-filter: blur(12px); transition: border-color 0.3s; line-height: 1.5; }
     .thought-input::placeholder { color: rgba(245, 240, 232, 0.35); }
-    .thought-input:focus { border-color: rgba(251, 191, 36, 0.3); }
-    .thought-hint { font-size: 0.72rem; opacity: 0.35; text-align: center; margin-top: 8px; letter-spacing: 0.03em; }
+    .thought-input:focus { border-color: rgba(251, 191, 36, 0.28); }
+    .thought-hint { font-size: 0.72rem; opacity: 0.32; text-align: center; margin-top: 9px; letter-spacing: 0.03em; }
     .thoughts { position: fixed; inset: 0; pointer-events: none; z-index: 8; overflow: hidden; }
     .floating-thought { position: absolute; max-width: 260px; padding: 10px 14px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border-radius: 12px; font-size: 0.82rem; line-height: 1.45; color: rgba(245, 240, 232, 0.75); opacity: 0; animation: thoughtAppear 12s ease forwards; border: 1px solid rgba(255,255,255,0.05); }
     @keyframes thoughtAppear { 0% { opacity: 0; transform: translateY(12px); } 8% { opacity: 0.7; transform: translateY(0); } 80% { opacity: 0.55; } 100% { opacity: 0; transform: translateY(-8px); } }
-    .footer-note { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.08em; z-index: 10; }
+    .footer-note { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.08em; z-index: 10; }
     .sound-toggle { position: fixed; top: 24px; right: 24px; z-index: 30; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); color: rgba(245, 240, 232, 0.6); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; font-size: 16px; }
     .sound-toggle:hover { background: rgba(0,0,0,0.5); color: #f5f0e8; }
     .sound-toggle.on { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
     @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     @keyframes fadeInTitle { from { opacity: 0; transform: translateX(-50%) translateY(16px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-    @media (max-width: 600px) { .main-title { font-size: 2.6rem; } .diya-area { bottom: 22%; } .thought-area { bottom: 5%; } .lit-diya { bottom: 32%; } .sound-toggle { top: 16px; right: 16px; } }
+    @media (max-width: 600px) { .main-title { font-size: 2.6rem; } .thought-area { bottom: 9%; } .sound-toggle { top: 16px; right: 16px; } }
   </style>
 </head>
 <body>
   <div class="bg" id="bg"></div>
   <div class="vignette"></div>
   <div class="grain"></div>
-
-  <div class="lit-diya" id="litDiya">
-    <div class="diya-glow"></div>
-    <div class="flame">
-      <div class="flame-outer"></div>
-      <div class="flame-inner"></div>
-    </div>
-    <div class="diya-base"></div>
-  </div>
 
   <button class="sound-toggle" id="soundToggle" title="Toggle soft sounds">
     <span id="soundIcon">🔇</span>
@@ -81,12 +55,6 @@
 
   <div class="presence" id="presence"></div>
   <div class="thoughts" id="thoughts"></div>
-
-  <div class="diya-area">
-    <button class="diya-btn" id="diyaBtn">
-      <span id="diyaText">light a diya</span>
-    </button>
-  </div>
 
   <div class="thought-area">
     <textarea class="thought-input" id="thoughtInput" rows="2" maxlength="140" placeholder="leave a quiet thought here..."></textarea>
@@ -154,30 +122,6 @@
       const light = document.createElement('div'); light.className = 'soft-light'; light.style.top = pos.top; light.style.left = pos.left; light.style.animationDelay = (i * 1.4) + 's'; presence.appendChild(light);
     });
 
-    const diyaBtn = document.getElementById('diyaBtn');
-    const diyaText = document.getElementById('diyaText');
-    const litDiya = document.getElementById('litDiya');
-    let diyaLit = localStorage.getItem('aangan-diya') === 'true';
-
-    function updateDiya() {
-      if (diyaLit) {
-        diyaBtn.classList.add('lit');
-        diyaText.textContent = 'your diya is lit';
-        litDiya.classList.add('visible');
-      } else {
-        diyaBtn.classList.remove('lit');
-        diyaText.textContent = 'light a diya';
-        litDiya.classList.remove('visible');
-      }
-    }
-    updateDiya();
-
-    diyaBtn.addEventListener('click', () => {
-      diyaLit = !diyaLit;
-      localStorage.setItem('aangan-diya', diyaLit);
-      updateDiya();
-    });
-
     const thoughtInput = document.getElementById('thoughtInput');
     const thoughtsContainer = document.getElementById('thoughts');
     let savedThoughts = JSON.parse(localStorage.getItem('aangan-thoughts') || '[]');
@@ -207,6 +151,12 @@
     });
 
     setTimeout(() => document.getElementById('bg').classList.add('settled'), 800);
+
+    setInterval(() => {
+      document.querySelectorAll('.soft-light').forEach(l => {
+        if (Math.random() > 0.7) l.style.animationDuration = (6 + Math.random() * 6) + 's';
+      });
+    }, 12000);
   </script>
 </body>
 </html>
