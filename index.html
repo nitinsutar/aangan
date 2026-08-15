@@ -41,31 +41,116 @@
     .rain-container.active { opacity: 1; }
     .drop { position: absolute; width: 1px; background: linear-gradient(to bottom, transparent, rgba(200, 220, 255, 0.32)); border-radius: 0 0 2px 2px; animation: fall linear infinite; }
     @keyframes fall { 0% { transform: translateY(-20px); opacity: 0; } 10% { opacity: 0.55; } 90% { opacity: 0.35; } 100% { transform: translateY(100vh); opacity: 0; } }
-    .title-area { position: fixed; top: 11%; left: 50%; transform: translateX(-50%); text-align: center; z-index: 20; opacity: 0; animation: fadeInTitle 2.5s ease 0.6s forwards; }
-    .main-title { font-family: 'Tiro Devanagari Hindi', serif; font-size: clamp(3.1rem, 8vw, 5.2rem); font-weight: 400; letter-spacing: 0.02em; text-shadow: 0 4px 40px rgba(0,0,0,0.7); margin-bottom: 8px; }
-    .sub { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.05rem; opacity: 0.55; letter-spacing: 0.04em; }
-    .time-label { margin-top: 10px; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.32; }
+
+    .title-area {
+      position: fixed;
+      top: 11%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 20;
+      opacity: 0;
+      animation: fadeInTitle 2.5s ease 0.6s forwards;
+      transition: opacity 2.2s ease, transform 2.2s ease;
+    }
+
+    .title-area.faded {
+      opacity: 0 !important;
+      transform: translateX(-50%) translateY(-14px);
+      pointer-events: none;
+    }
+
+    .main-title {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: clamp(3.1rem, 8vw, 5.2rem);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      text-shadow: 0 4px 40px rgba(0,0,0,0.7);
+      margin-bottom: 8px;
+    }
+
+    .sub {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      opacity: 0.55;
+      letter-spacing: 0.04em;
+    }
+
     .presence { position: fixed; inset: 0; pointer-events: none; z-index: 8; }
     .soft-light { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #fbbf24; box-shadow: 0 0 14px 5px rgba(251, 191, 36, 0.3); opacity: 0; animation: breathe 8s ease-in-out infinite; }
     @keyframes breathe { 0%, 100% { opacity: 0.12; transform: scale(0.85); } 50% { opacity: 0.5; transform: scale(1.1); } }
+
     .thought-area { position: fixed; bottom: 11%; left: 50%; transform: translateX(-50%); width: min(400px, 88vw); z-index: 20; opacity: 0; animation: fadeIn 2s ease 1.6s forwards; }
     .thought-input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; padding: 14px 18px; color: #f5f0e8; font-size: 0.95rem; font-family: inherit; outline: none; resize: none; backdrop-filter: blur(12px); transition: border-color 0.3s; line-height: 1.5; }
     .thought-input::placeholder { color: rgba(245, 240, 232, 0.35); }
     .thought-input:focus { border-color: rgba(251, 191, 36, 0.28); }
     .thought-hint { font-size: 0.72rem; opacity: 0.32; text-align: center; margin-top: 9px; letter-spacing: 0.03em; }
+
     .thoughts { position: fixed; inset: 0; pointer-events: none; z-index: 9; overflow: hidden; }
     .floating-thought { position: absolute; max-width: 260px; padding: 10px 14px; background: rgba(0,0,0,0.42); backdrop-filter: blur(10px); border-radius: 12px; font-size: 0.82rem; line-height: 1.45; color: rgba(245, 240, 232, 0.75); opacity: 0; animation: thoughtAppear 12s ease forwards; border: 1px solid rgba(255,255,255,0.05); }
     @keyframes thoughtAppear { 0% { opacity: 0; transform: translateY(12px); } 8% { opacity: 0.7; transform: translateY(0); } 80% { opacity: 0.55; } 100% { opacity: 0; transform: translateY(-8px); } }
+
     .footer-note { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.08em; z-index: 10; }
-    .controls { position: fixed; top: 24px; right: 24px; z-index: 30; display: flex; gap: 10px; }
-    .control-btn { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); color: rgba(245, 240, 232, 0.6); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; font-size: 16px; }
+
+    .controls {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 30;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .time-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      backdrop-filter: blur(10px);
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      cursor: default;
+    }
+    .time-icon:hover { opacity: 1; }
+
+    .control-btn {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(245, 240, 232, 0.6);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
     .control-btn:hover { background: rgba(0,0,0,0.5); color: #f5f0e8; }
     .control-btn.on { color: #7dd3fc; border-color: rgba(125, 211, 252, 0.35); }
     .control-btn.sound-on { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
+
     #yt-player { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; bottom: 0; left: 0; z-index: -1; }
+
     @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     @keyframes fadeInTitle { from { opacity: 0; transform: translateX(-50%) translateY(16px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-    @media (max-width: 600px) { .main-title { font-size: 2.9rem; } .thought-area { bottom: 9%; } .controls { top: 16px; right: 16px; gap: 8px; } .control-btn { width: 38px; height: 38px; font-size: 15px; } .stars { height: 42%; } }
+
+    @media (max-width: 600px) {
+      .main-title { font-size: 2.9rem; }
+      .thought-area { bottom: 9%; }
+      .controls { top: 16px; right: 16px; gap: 8px; }
+      .control-btn, .time-icon { width: 38px; height: 38px; font-size: 15px; }
+      .stars { height: 42%; }
+    }
   </style>
 </head>
 <body>
@@ -81,6 +166,7 @@
   <div id="yt-player"></div>
 
   <div class="controls">
+    <div class="time-icon" id="timeIcon" title="night">🌙</div>
     <button class="control-btn" id="rainToggle" title="Toggle rain"><span>🌧️</span></button>
     <button class="control-btn" id="soundToggle" title="Play soft music"><span id="soundIcon">🔇</span></button>
   </div>
@@ -88,7 +174,6 @@
   <div class="title-area">
     <div class="main-title">आँगन</div>
     <div class="sub">a quiet courtyard</div>
-    <div class="time-label" id="timeLabel"></div>
   </div>
 
   <div class="presence" id="presence"></div>
@@ -109,15 +194,33 @@
       if (hour >= 16 && hour < 19) return 'sunset';
       return 'night';
     }
-    const timeLabels = { sunrise: 'sunrise', afternoon: 'afternoon', sunset: 'sunset', night: 'night' };
+
+    const timeIcons = {
+      sunrise: '🌅',
+      afternoon: '☀️',
+      sunset: '🌇',
+      night: '🌙'
+    };
+
     function applyTimeOfDay() {
       const time = getTimeOfDay();
       document.body.classList.remove('time-sunrise', 'time-afternoon', 'time-sunset', 'time-night');
       document.body.classList.add('time-' + time);
-      document.getElementById('timeLabel').textContent = timeLabels[time];
+      const iconEl = document.getElementById('timeIcon');
+      if (iconEl) {
+        iconEl.textContent = timeIcons[time];
+        iconEl.title = time;
+      }
     }
+
     applyTimeOfDay();
     setInterval(applyTimeOfDay, 10 * 60 * 1000);
+
+    // Fade the title after a few seconds so the courtyard becomes the focus
+    setTimeout(() => {
+      const title = document.querySelector('.title-area');
+      if (title) title.classList.add('faded');
+    }, 4500);
 
     function createStars() {
       const container = document.getElementById('stars');
