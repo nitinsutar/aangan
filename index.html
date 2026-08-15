@@ -239,6 +239,36 @@
       z-index: 10;
     }
 
+    .sound-toggle {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 30;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(245, 240, 232, 0.6);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+
+    .sound-toggle:hover {
+      background: rgba(0,0,0,0.5);
+      color: #f5f0e8;
+    }
+
+    .sound-toggle.on {
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.3);
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateX(-50%) translateY(10px); }
       to { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -253,6 +283,7 @@
       .main-title { font-size: 2.6rem; }
       .diya-area { bottom: 26%; }
       .thought-area { bottom: 7%; }
+      .sound-toggle { top: 16px; right: 16px; }
     }
   </style>
 </head>
@@ -260,6 +291,10 @@
   <div class="bg" id="bg"></div>
   <div class="vignette"></div>
   <div class="grain"></div>
+
+  <button class="sound-toggle" id="soundToggle" title="Toggle soft sounds">
+    <span id="soundIcon">🔇</span>
+  </button>
 
   <div class="title-area">
     <div class="main-title">आँगन</div>
@@ -290,6 +325,149 @@
   <div class="footer-note">you are not alone here</div>
 
   <script>
+    // Soft ambient + distant temple bells using Web Audio (no external files needed)
+    let audioCtx = null;
+    let ambientNodes = null;
+    let soundOn = false;
+    let bellTimer = null;
+
+    const soundToggle = document.getElementById('soundToggle');
+    const soundIcon = document.getElementById('soundIcon');
+
+    function initAudio() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function createSoftAmbient() {
+      if (!audioCtx) return;
+
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.045;
+      gain.connect(audioCtx.destination);
+
+      const osc = audioCtx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = 65;
+      const oscGain = audioCtx.createGain();
+      oscGain.gain.value = 0.3;
+      osc.connect(oscGain);
+      oscGain.connect(gain);
+      osc.start();
+
+      const osc2 = audioCtx.createOscillator();
+      osc2.type = 'sine';
+      osc2.frequency.value = 98;
+      const osc2Gain = audioCtx.createGain();
+      osc2Gain.gain.value = 0.12;
+      osc2.connect(osc2Gain);
+      osc2Gain.connect(gain);
+      osc2.start();
+
+      const bufferSize = 2 * audioCtx.sampleRate;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.4;
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      noise.loop = true;
+
+      const noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = 1800;
+      noiseFilter.Q.value = 0.6;
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.value = 0.08;
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(gain);
+      noise.start();
+
+      ambientNodes = { gain, osc, osc2, noise };
+    }
+
+    function playDistantBell() {
+      if (!audioCtx || !soundOn) return;
+
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(420 + Math.random() * 80, now);
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.09, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 3.8);
+
+      const osc2 = audioCtx.createOscillator();
+      const gain2 = audioCtx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(630 + Math.random() * 40, now);
+      gain2.gain.setValueAtTime(0, now);
+      gain2.gain.linearRampToValueAtTime(0.035, now + 0.01);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc2.connect(gain2);
+      gain2.connect(audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 4);
+      osc2.start(now);
+      osc2.stop(now + 3);
+    }
+
+    function startBells() {
+      stopBells();
+      setTimeout(() => {
+        if (soundOn) playDistantBell();
+      }, 4000 + Math.random() * 3000);
+
+      bellTimer = setInterval(() => {
+        if (soundOn && Math.random() > 0.35) {
+          playDistantBell();
+        }
+      }, 14000 + Math.random() * 18000);
+    }
+
+    function stopBells() {
+      if (bellTimer) {
+        clearInterval(bellTimer);
+        bellTimer = null;
+      }
+    }
+
+    function enableSound() {
+      initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!ambientNodes) createSoftAmbient();
+      else ambientNodes.gain.gain.value = 0.045;
+      soundOn = true;
+      soundIcon.textContent = '🔊';
+      soundToggle.classList.add('on');
+      startBells();
+    }
+
+    function disableSound() {
+      soundOn = false;
+      soundIcon.textContent = '🔇';
+      soundToggle.classList.remove('on');
+      stopBells();
+      if (ambientNodes) ambientNodes.gain.gain.value = 0;
+    }
+
+    soundToggle.addEventListener('click', () => {
+      if (soundOn) disableSound();
+      else enableSound();
+    });
+
+    // Presence lights
     const presence = document.getElementById('presence');
     const positions = [
       { top: '58%', left: '22%' },
@@ -309,6 +487,7 @@
       presence.appendChild(light);
     });
 
+    // Diya
     const diyaBtn = document.getElementById('diyaBtn');
     const diyaText = document.getElementById('diyaText');
     let diyaLit = localStorage.getItem('aangan-diya') === 'true';
@@ -330,30 +509,22 @@
       updateDiya();
     });
 
+    // Thoughts
     const thoughtInput = document.getElementById('thoughtInput');
     const thoughtsContainer = document.getElementById('thoughts');
-
     let savedThoughts = JSON.parse(localStorage.getItem('aangan-thoughts') || '[]');
 
     function showThought(text, isNew = false) {
       const el = document.createElement('div');
       el.className = 'floating-thought';
       el.textContent = text;
-
       const top = 28 + Math.random() * 35;
       const left = 8 + Math.random() * 70;
       el.style.top = top + '%';
       el.style.left = left + '%';
-
-      if (isNew) {
-        el.style.animationDuration = '14s';
-      }
-
+      if (isNew) el.style.animationDuration = '14s';
       thoughtsContainer.appendChild(el);
-
-      setTimeout(() => {
-        el.remove();
-      }, 14000);
+      setTimeout(() => el.remove(), 14000);
     }
 
     if (savedThoughts.length === 0) {
@@ -378,13 +549,10 @@
         e.preventDefault();
         const text = thoughtInput.value.trim();
         if (text.length < 2) return;
-
         showThought(text, true);
-
         savedThoughts.unshift(text);
         if (savedThoughts.length > 12) savedThoughts.pop();
         localStorage.setItem('aangan-thoughts', JSON.stringify(savedThoughts));
-
         thoughtInput.value = '';
         thoughtInput.blur();
       }
