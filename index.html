@@ -41,14 +41,15 @@
     .rain-container.active { opacity: 1; }
     .drop { position: absolute; width: 1px; background: linear-gradient(to bottom, transparent, rgba(200,220,255,0.32)); border-radius: 0 0 2px 2px; animation: fall linear infinite; }
     @keyframes fall { 0% { transform: translateY(-20px); opacity: 0; } 10% { opacity: 0.55; } 90% { opacity: 0.35; } 100% { transform: translateY(100vh); opacity: 0; } }
-    .title-area { position: fixed; top: 11%; left: 50%; transform: translateX(-50%); text-align: center; z-index: 20; opacity: 0; animation: fadeInTitle 2.5s ease 0.6s forwards; transition: opacity 2.2s ease, transform 2.2s ease; }
-    .title-area.faded { opacity: 0 !important; transform: translateX(-50%) translateY(-14px); pointer-events: none; }
+    .title-area { position: fixed; top: 11%; left: 50%; transform: translateX(-50%); text-align: center; z-index: 20; opacity: 0; transition: opacity 2.4s ease, transform 2.4s ease; }
+    .title-area.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .title-area.faded { opacity: 0; transform: translateX(-50%) translateY(-16px); pointer-events: none; }
     .main-title { font-family: 'Tiro Devanagari Hindi', serif; font-size: clamp(3.1rem, 8vw, 5.2rem); font-weight: 400; letter-spacing: 0.02em; text-shadow: 0 4px 40px rgba(0,0,0,0.7); margin-bottom: 8px; }
     .sub { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.05rem; opacity: 0.55; letter-spacing: 0.04em; }
     .presence { position: fixed; inset: 0; pointer-events: none; z-index: 8; }
     .soft-light { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #fbbf24; box-shadow: 0 0 14px 5px rgba(251,191,36,0.3); opacity: 0; animation: breathe 8s ease-in-out infinite; }
     @keyframes breathe { 0%, 100% { opacity: 0.12; transform: scale(0.85); } 50% { opacity: 0.5; transform: scale(1.1); } }
-    .thought-area { position: fixed; bottom: 11%; left: 50%; transform: translateX(-50%); width: min(400px, 88vw); z-index: 20; opacity: 0; animation: fadeIn 2s ease 1.6s forwards; }
+    .thought-area { position: fixed; bottom: 11%; left: 50%; transform: translateX(-50%); width: min(400px, 88vw); z-index: 20; opacity: 0; animation: fadeIn 2s ease 1.8s forwards; }
     .thought-input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; padding: 14px 18px; color: #f5f0e8; font-size: 0.95rem; font-family: inherit; outline: none; resize: none; backdrop-filter: blur(12px); transition: border-color 0.3s; line-height: 1.5; }
     .thought-input::placeholder { color: rgba(245,240,232,0.35); }
     .thought-input:focus { border-color: rgba(251,191,36,0.28); }
@@ -57,18 +58,16 @@
     .floating-thought { position: absolute; max-width: 260px; padding: 10px 14px; background: rgba(0,0,0,0.42); backdrop-filter: blur(10px); border-radius: 12px; font-size: 0.82rem; line-height: 1.45; color: rgba(245,240,232,0.75); opacity: 0; animation: thoughtAppear 12s ease forwards; border: 1px solid rgba(255,255,255,0.05); }
     @keyframes thoughtAppear { 0% { opacity: 0; transform: translateY(12px); } 8% { opacity: 0.7; transform: translateY(0); } 80% { opacity: 0.55; } 100% { opacity: 0; transform: translateY(-8px); } }
     .footer-note { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.08em; z-index: 10; }
-    .controls { position: fixed; top: 20px; right: 20px; z-index: 30; display: flex; gap: 8px; align-items: center; }
-    .time-display { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 6px 12px 6px 10px; backdrop-filter: blur(10px); color: rgba(245,240,232,0.7); font-size: 0.78rem; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
-    .time-display svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; opacity: 0.85; }
-    .control-btn { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); color: rgba(245,240,232,0.65); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.25s ease; }
+    .controls { position: fixed; top: 24px; right: 24px; z-index: 30; display: flex; gap: 10px; align-items: center; }
+    .time-icon { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 17px; backdrop-filter: blur(10px); opacity: 0.7; transition: opacity 0.3s ease; cursor: default; }
+    .time-icon:hover { opacity: 1; }
+    .control-btn { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); color: rgba(245,240,232,0.6); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; font-size: 16px; }
     .control-btn:hover { background: rgba(0,0,0,0.5); color: #f5f0e8; }
     .control-btn.on { color: #7dd3fc; border-color: rgba(125,211,252,0.35); }
     .control-btn.sound-on { color: #fbbf24; border-color: rgba(251,191,36,0.3); }
-    .control-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
     #yt-player { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; bottom: 0; left: 0; z-index: -1; }
     @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-    @keyframes fadeInTitle { from { opacity: 0; transform: translateX(-50%) translateY(16px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-    @media (max-width: 600px) { .main-title { font-size: 2.9rem; } .thought-area { bottom: 9%; } .controls { top: 14px; right: 14px; gap: 6px; } .control-btn { width: 36px; height: 36px; } .control-btn svg { width: 16px; height: 16px; } .time-display { padding: 5px 10px 5px 8px; font-size: 0.72rem; } .time-display svg { width: 14px; height: 14px; } .stars { height: 42%; } }
+    @media (max-width: 600px) { .main-title { font-size: 2.9rem; } .thought-area { bottom: 9%; } .controls { top: 16px; right: 16px; gap: 8px; } .control-btn, .time-icon { width: 38px; height: 38px; font-size: 15px; } .stars { height: 42%; } }
   </style>
 </head>
 <body>
@@ -84,19 +83,12 @@
   <div id="yt-player"></div>
 
   <div class="controls">
-    <div class="time-display" id="timeDisplay">
-      <svg id="timeSvg" viewBox="0 0 24 24"></svg>
-      <span id="clock">--:--</span>
-    </div>
-    <button class="control-btn" id="rainToggle" title="Toggle rain">
-      <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6c0 1.2.4 2.3 1 3.2L4 19h16l-3-6.8c.6-.9 1-2 1-3.2a6 6 0 0 0-6-6z"/><line x1="8" y1="19" x2="8" y2="21"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="16" y1="19" x2="16" y2="21"/></svg>
-    </button>
-    <button class="control-btn" id="soundToggle" title="Toggle sound">
-      <svg id="soundSvg" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-    </button>
+    <div class="time-icon" id="timeIcon" title="night">🌙</div>
+    <button class="control-btn" id="rainToggle" title="Toggle rain">🌧️</button>
+    <button class="control-btn" id="soundToggle" title="Play soft music"><span id="soundIcon">🔇</span></button>
   </div>
 
-  <div class="title-area">
+  <div class="title-area" id="titleArea">
     <div class="main-title">आँगन</div>
     <div class="sub">a quiet courtyard</div>
   </div>
@@ -113,174 +105,65 @@
 
   <script>
     function getTimeOfDay() {
-      const h = new Date().getHours();
-      if (h >= 5 && h < 8) return 'sunrise';
-      if (h >= 8 && h < 16) return 'afternoon';
-      if (h >= 16 && h < 19) return 'sunset';
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 8) return 'sunrise';
+      if (hour >= 8 && hour < 16) return 'afternoon';
+      if (hour >= 16 && hour < 19) return 'sunset';
       return 'night';
     }
-
-    const timeIcons = {
-      sunrise: `<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>`,
-      afternoon: `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`,
-      sunset: `<path d="M12 10V2M4.93 10.93l1.41 1.41M2 18h20M19.07 10.93l-1.41 1.41M7 18a5 5 0 0 1 10 0"/><line x1="8" y1="22" x2="8.01" y2="22"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="22" x2="16.01" y2="22"/>`,
-      night: `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`
-    };
-
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clock').textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-    }
-
+    const timeIcons = { sunrise: '🌅', afternoon: '☀️', sunset: '🌇', night: '🌙' };
     function applyTimeOfDay() {
       const time = getTimeOfDay();
-      document.body.classList.remove('time-sunrise','time-afternoon','time-sunset','time-night');
+      document.body.classList.remove('time-sunrise', 'time-afternoon', 'time-sunset', 'time-night');
       document.body.classList.add('time-' + time);
-      document.getElementById('timeSvg').innerHTML = timeIcons[time];
-      updateAmbientForTime(time);
+      const iconEl = document.getElementById('timeIcon');
+      if (iconEl) { iconEl.textContent = timeIcons[time]; iconEl.title = time; }
     }
-
-    updateClock();
     applyTimeOfDay();
-    setInterval(updateClock, 10000);
-    setInterval(applyTimeOfDay, 5 * 60 * 1000);
+    setInterval(applyTimeOfDay, 10 * 60 * 1000);
 
-    setTimeout(() => {
-      const t = document.querySelector('.title-area');
-      if (t) t.classList.add('faded');
-    }, 4500);
-
-    let audioCtx = null, ambientNodes = null, cricketTimer = null, bellTimer = null;
-
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
-    function stopAmbient() {
-      if (ambientNodes) {
-        try {
-          ambientNodes.gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
-          setTimeout(() => {
-            if (ambientNodes) {
-              ambientNodes.osc1.stop(); ambientNodes.osc2.stop(); ambientNodes.noise.stop();
-              ambientNodes = null;
-            }
-          }, 1400);
-        } catch(e) {}
-      }
-      clearInterval(cricketTimer); clearInterval(bellTimer);
-      cricketTimer = bellTimer = null;
-    }
-
-    function createBaseDrone(freq1, freq2, noiseAmt, vol) {
-      const gain = audioCtx.createGain();
-      gain.gain.value = 0;
-      gain.connect(audioCtx.destination);
-      gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 2.5);
-
-      const osc1 = audioCtx.createOscillator();
-      osc1.type = 'sine'; osc1.frequency.value = freq1;
-      const g1 = audioCtx.createGain(); g1.gain.value = 0.35;
-      osc1.connect(g1); g1.connect(gain); osc1.start();
-
-      const osc2 = audioCtx.createOscillator();
-      osc2.type = 'sine'; osc2.frequency.value = freq2;
-      const g2 = audioCtx.createGain(); g2.gain.value = 0.18;
-      osc2.connect(g2); g2.connect(gain); osc2.start();
-
-      const bufferSize = 2 * audioCtx.sampleRate;
-      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
-      const noise = audioCtx.createBufferSource();
-      noise.buffer = noiseBuffer; noise.loop = true;
-      const nf = audioCtx.createBiquadFilter();
-      nf.type = 'bandpass'; nf.frequency.value = 1800; nf.Q.value = 0.5;
-      const ng = audioCtx.createGain(); ng.gain.value = noiseAmt;
-      noise.connect(nf); nf.connect(ng); ng.connect(gain); noise.start();
-
-      ambientNodes = { gain, osc1, osc2, noise };
-    }
-
-    function playSoftBell() {
-      if (!audioCtx || !soundOn) return;
-      const now = audioCtx.currentTime;
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(420 + Math.random() * 60, now);
-      g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(0.06, now + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
-      o.connect(g); g.connect(audioCtx.destination);
-      o.start(now); o.stop(now + 4);
-    }
-
-    function playCricket() {
-      if (!audioCtx || !soundOn) return;
-      const now = audioCtx.currentTime;
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.type = 'square';
-      o.frequency.value = 3200 + Math.random() * 800;
-      g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(0.012, now + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-      o.connect(g); g.connect(audioCtx.destination);
-      o.start(now); o.stop(now + 0.1);
-    }
-
-    function updateAmbientForTime(time) {
-      if (!soundOn) return;
-      stopAmbient();
-      initAudio();
-      if (time === 'night') {
-        createBaseDrone(58, 87, 0.06, 0.035);
-        cricketTimer = setInterval(() => { if (Math.random() > 0.4) playCricket(); }, 1800 + Math.random() * 2200);
-        bellTimer = setInterval(() => { if (Math.random() > 0.55) playSoftBell(); }, 16000 + Math.random() * 20000);
-      } else if (time === 'sunrise') {
-        createBaseDrone(72, 108, 0.04, 0.028);
-      } else if (time === 'afternoon') {
-        createBaseDrone(65, 98, 0.03, 0.022);
-      } else if (time === 'sunset') {
-        createBaseDrone(55, 82, 0.05, 0.032);
-        bellTimer = setInterval(() => { if (Math.random() > 0.6) playSoftBell(); }, 18000 + Math.random() * 18000);
-      }
-    }
+    const titleArea = document.getElementById('titleArea');
+    setTimeout(() => { titleArea.classList.add('visible'); }, 600);
+    setTimeout(() => { titleArea.classList.remove('visible'); titleArea.classList.add('faded'); }, 5200);
 
     function createStars() {
-      const c = document.getElementById('stars');
-      c.innerHTML = '';
+      const container = document.getElementById('stars');
+      container.innerHTML = '';
       const count = window.innerWidth < 600 ? 38 : 60;
       for (let i = 0; i < count; i++) {
-        const s = document.createElement('div');
-        s.className = 'star';
-        s.style.left = Math.random() * 100 + '%';
-        s.style.top = Math.random() * 100 + '%';
-        s.style.animationDelay = (Math.random() * 6) + 's';
-        s.style.animationDuration = (3.5 + Math.random() * 4) + 's';
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = (Math.random() * 6) + 's';
+        star.style.animationDuration = (3.5 + Math.random() * 4) + 's';
         const size = 1 + Math.random() * 1.6;
-        s.style.width = size + 'px'; s.style.height = size + 'px';
-        c.appendChild(s);
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        container.appendChild(star);
       }
     }
     createStars();
 
     const bg = document.getElementById('bg');
-    const starsEl = document.getElementById('stars');
-    let tx = 0, ty = 0, cx = 0, cy = 0;
-    document.addEventListener('mousemove', e => {
-      tx = (e.clientX / window.innerWidth - 0.5) * 16;
-      ty = (e.clientY / window.innerHeight - 0.5) * 10;
-    });
-    function parallax() {
-      cx += (tx - cx) * 0.04; cy += (ty - cy) * 0.04;
-      bg.style.transform = `scale(${document.body.classList.contains('settled') ? 1 : 1.04}) translate(${cx * 0.3}px, ${cy * 0.3}px)`;
-      starsEl.style.transform = `translate(${cx * 0.7}px, ${cy * 0.5}px)`;
-      requestAnimationFrame(parallax);
+    const stars = document.getElementById('stars');
+    let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+    if (window.innerWidth > 700) {
+      document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2;
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        targetX = x * 8; targetY = y * 5;
+      });
+      function animateParallax() {
+        currentX += (targetX - currentX) * 0.04;
+        currentY += (targetY - currentY) * 0.04;
+        const scale = bg.classList.contains('settled') ? 1 : 1.04;
+        bg.style.transform = `scale(${scale}) translate(${currentX * 0.3}px, ${currentY * 0.3}px)`;
+        stars.style.transform = `translate(${currentX * 0.7}px, ${currentY * 0.5}px)`;
+        requestAnimationFrame(animateParallax);
+      }
+      animateParallax();
     }
-    if (window.innerWidth > 700) parallax();
 
     const rainContainer = document.getElementById('rainContainer');
     const rainToggle = document.getElementById('rainToggle');
@@ -289,34 +172,28 @@
       rainContainer.innerHTML = '';
       const count = window.innerWidth < 600 ? 50 : 85;
       for (let i = 0; i < count; i++) {
-        const d = document.createElement('div');
-        d.className = 'drop';
-        d.style.left = Math.random() * 100 + '%';
-        d.style.height = (11 + Math.random() * 16) + 'px';
-        d.style.animationDuration = (0.7 + Math.random() * 0.85) + 's';
-        d.style.animationDelay = (Math.random() * 4) + 's';
-        rainContainer.appendChild(d);
+        const drop = document.createElement('div');
+        drop.className = 'drop';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.height = (11 + Math.random() * 16) + 'px';
+        drop.style.animationDuration = (0.7 + Math.random() * 0.85) + 's';
+        drop.style.animationDelay = (Math.random() * 4) + 's';
+        rainContainer.appendChild(drop);
       }
     }
-    rainToggle.addEventListener('click', () => {
-      rainOn = !rainOn;
-      rainToggle.classList.toggle('on', rainOn);
-      rainContainer.classList.toggle('active', rainOn);
-      document.body.classList.toggle('raining', rainOn);
-      if (rainOn) createRain();
-    });
-
-    window.addEventListener('resize', () => {
-      clearTimeout(window._rt);
-      window._rt = setTimeout(() => { if (rainOn) createRain(); createStars(); }, 300);
-    });
+    function enableRain() {
+      rainOn = true; rainToggle.classList.add('on'); rainContainer.classList.add('active');
+      document.body.classList.add('raining'); createRain();
+    }
+    function disableRain() {
+      rainOn = false; rainToggle.classList.remove('on'); rainContainer.classList.remove('active');
+      document.body.classList.remove('raining');
+    }
+    rainToggle.addEventListener('click', () => { if (rainOn) disableRain(); else enableRain(); });
 
     let player = null, soundOn = false;
     const soundToggle = document.getElementById('soundToggle');
-    const soundSvg = document.getElementById('soundSvg');
-    const mutedIcon = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>`;
-    const soundIconSvg = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>`;
-
+    const soundIcon = document.getElementById('soundIcon');
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
@@ -324,33 +201,26 @@
       player = new YT.Player('yt-player', {
         height: '1', width: '1', videoId: 'uAJ9Qv7VqhQ',
         playerVars: { listType: 'playlist', list: 'PLgsOOZkvTXhcwYc8xK6zLeF_rYSIuUPz4', autoplay: 0, controls: 0, disablekb: 1, fs: 0, modestbranding: 1, rel: 0, loop: 1, playsinline: 1 },
-        events: { onStateChange: e => { if (e.data === YT.PlayerState.ENDED && soundOn) player.playVideo(); } }
+        events: { onStateChange: function(e) { if (e.data === YT.PlayerState.ENDED && soundOn) player.playVideo(); } }
       });
     }
     window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-
     function enableSound() {
       if (!player || typeof player.playVideo !== 'function') { setTimeout(enableSound, 400); return; }
-      soundOn = true;
-      soundToggle.classList.add('sound-on');
-      soundSvg.innerHTML = soundIconSvg;
-      player.unMute(); player.setVolume(42); player.playVideo();
-      updateAmbientForTime(getTimeOfDay());
+      soundOn = true; soundIcon.textContent = '🔊'; soundToggle.classList.add('sound-on');
+      player.unMute(); player.setVolume(45); player.playVideo();
     }
     function disableSound() {
-      soundOn = false;
-      soundToggle.classList.remove('sound-on');
-      soundSvg.innerHTML = mutedIcon;
-      if (player && player.pauseVideo) player.pauseVideo();
-      stopAmbient();
+      soundOn = false; soundIcon.textContent = '🔇'; soundToggle.classList.remove('sound-on');
+      if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
     }
     soundToggle.addEventListener('click', () => { if (soundOn) disableSound(); else enableSound(); });
 
     const presence = document.getElementById('presence');
-    [{ top:'62%', left:'18%' }, { top:'68%', left:'82%' }, { top:'55%', left:'12%' }, { top:'72%', left:'70%' }].forEach((p, i) => {
-      const l = document.createElement('div');
-      l.className = 'soft-light'; l.style.top = p.top; l.style.left = p.left; l.style.animationDelay = (i * 1.6) + 's';
-      presence.appendChild(l);
+    [{ top: '62%', left: '18%' }, { top: '68%', left: '82%' }, { top: '55%', left: '12%' }, { top: '72%', left: '70%' }].forEach((pos, i) => {
+      const light = document.createElement('div');
+      light.className = 'soft-light'; light.style.top = pos.top; light.style.left = pos.left; light.style.animationDelay = (i * 1.6) + 's';
+      presence.appendChild(light);
     });
 
     const thoughtInput = document.getElementById('thoughtInput');
@@ -366,7 +236,7 @@
     if (savedThoughts.length === 0) savedThoughts = ["just sitting for a bit", "the evening feels soft today", "missing home a little", "this is enough for now"];
     setTimeout(() => { if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]); }, 4000);
     setInterval(() => { if (savedThoughts.length) showThought(savedThoughts[Math.floor(Math.random() * savedThoughts.length)]); }, 16000);
-    thoughtInput.addEventListener('keydown', e => {
+    thoughtInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         const text = thoughtInput.value.trim();
@@ -377,6 +247,12 @@
         localStorage.setItem('aangan-thoughts', JSON.stringify(savedThoughts));
         thoughtInput.value = ''; thoughtInput.blur();
       }
+    });
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => { if (rainOn) createRain(); createStars(); }, 300);
     });
 
     setTimeout(() => {
