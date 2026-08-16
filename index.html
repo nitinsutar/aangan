@@ -59,12 +59,12 @@
     @keyframes thoughtAppear { 0% { opacity: 0; transform: translateY(12px); } 8% { opacity: 0.7; transform: translateY(0); } 80% { opacity: 0.55; } 100% { opacity: 0; transform: translateY(-8px); } }
     .footer-note { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.08em; z-index: 10; }
     .controls { position: fixed; top: 24px; right: 24px; z-index: 30; display: flex; gap: 10px; align-items: center; }
-    .time-icon { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 17px; backdrop-filter: blur(10px); opacity: 0.7; transition: opacity 0.3s ease; cursor: default; }
+    .time-icon { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; backdrop-filter: blur(10px); opacity: 0.85; transition: opacity 0.3s ease; cursor: default; }
     .time-icon:hover { opacity: 1; }
-    .control-btn { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); color: rgba(245,240,232,0.6); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; font-size: 16px; }
+    .control-btn { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); color: rgba(245,240,232,0.65); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; font-size: 16px; }
     .control-btn:hover { background: rgba(0,0,0,0.5); color: #f5f0e8; }
-    .control-btn.on { color: #7dd3fc; border-color: rgba(125,211,252,0.35); }
-    .control-btn.sound-on { color: #fbbf24; border-color: rgba(251,191,36,0.3); }
+    .control-btn.on { color: #7dd3fc; border-color: rgba(125,211,252,0.4); }
+    .control-btn.sound-on { color: #fbbf24; border-color: rgba(251,191,36,0.35); }
     #yt-player { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; bottom: 0; left: 0; z-index: -1; }
     @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     @media (max-width: 600px) { .main-title { font-size: 2.9rem; } .thought-area { bottom: 9%; } .controls { top: 16px; right: 16px; gap: 8px; } .control-btn, .time-icon { width: 38px; height: 38px; font-size: 15px; } .stars { height: 42%; } }
@@ -83,9 +83,9 @@
   <div id="yt-player"></div>
 
   <div class="controls">
-    <div class="time-icon" id="timeIcon" title="night">🌙</div>
+    <div class="time-icon" id="timeIcon" title="Time of day">🌙</div>
     <button class="control-btn" id="rainToggle" title="Toggle rain">🌧️</button>
-    <button class="control-btn" id="soundToggle" title="Play soft music"><span id="soundIcon">🔇</span></button>
+    <button class="control-btn" id="soundToggle" title="Soft ambient + music"><span id="soundIcon">🔇</span></button>
   </div>
 
   <div class="title-area" id="titleArea">
@@ -117,14 +117,18 @@
       document.body.classList.remove('time-sunrise', 'time-afternoon', 'time-sunset', 'time-night');
       document.body.classList.add('time-' + time);
       const iconEl = document.getElementById('timeIcon');
-      if (iconEl) { iconEl.textContent = timeIcons[time]; iconEl.title = time; }
+      if (iconEl) {
+        iconEl.textContent = timeIcons[time] || '🌙';
+        iconEl.title = time.charAt(0).toUpperCase() + time.slice(1);
+      }
+      if (window.updateAmbientForTime) window.updateAmbientForTime(time);
     }
     applyTimeOfDay();
-    setInterval(applyTimeOfDay, 10 * 60 * 1000);
+    setInterval(applyTimeOfDay, 5 * 60 * 1000);
 
     const titleArea = document.getElementById('titleArea');
-    setTimeout(() => { titleArea.classList.add('visible'); }, 600);
-    setTimeout(() => { titleArea.classList.remove('visible'); titleArea.classList.add('faded'); }, 5200);
+    setTimeout(() => titleArea.classList.add('visible'), 700);
+    setTimeout(() => { titleArea.classList.remove('visible'); titleArea.classList.add('faded'); }, 5500);
 
     function createStars() {
       const container = document.getElementById('stars');
@@ -146,7 +150,7 @@
     createStars();
 
     const bg = document.getElementById('bg');
-    const stars = document.getElementById('stars');
+    const starsEl = document.getElementById('stars');
     let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
     if (window.innerWidth > 700) {
       document.addEventListener('mousemove', (e) => {
@@ -154,15 +158,14 @@
         const y = (e.clientY / window.innerHeight - 0.5) * 2;
         targetX = x * 8; targetY = y * 5;
       });
-      function animateParallax() {
+      (function animateParallax() {
         currentX += (targetX - currentX) * 0.04;
         currentY += (targetY - currentY) * 0.04;
         const scale = bg.classList.contains('settled') ? 1 : 1.04;
         bg.style.transform = `scale(${scale}) translate(${currentX * 0.3}px, ${currentY * 0.3}px)`;
-        stars.style.transform = `translate(${currentX * 0.7}px, ${currentY * 0.5}px)`;
+        starsEl.style.transform = `translate(${currentX * 0.7}px, ${currentY * 0.5}px)`;
         requestAnimationFrame(animateParallax);
-      }
-      animateParallax();
+      })();
     }
 
     const rainContainer = document.getElementById('rainContainer');
@@ -191,9 +194,49 @@
     }
     rainToggle.addEventListener('click', () => { if (rainOn) disableRain(); else enableRain(); });
 
-    let player = null, soundOn = false;
+    let audioCtx = null, ambientNodes = null, player = null, soundOn = false;
     const soundToggle = document.getElementById('soundToggle');
     const soundIcon = document.getElementById('soundIcon');
+
+    function initAudio() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function createAmbient(time) {
+      if (!audioCtx) return;
+      if (ambientNodes) {
+        try { ambientNodes.osc.stop(); ambientNodes.osc2.stop(); ambientNodes.noise.stop(); } catch(e){}
+        ambientNodes = null;
+      }
+      const master = audioCtx.createGain();
+      master.gain.value = 0.04;
+      master.connect(audioCtx.destination);
+      let freq1 = 72, freq2 = 108, noiseLevel = 0.07;
+      if (time === 'sunrise') { freq1 = 78; freq2 = 116; noiseLevel = 0.05; }
+      if (time === 'afternoon') { freq1 = 85; freq2 = 128; noiseLevel = 0.04; }
+      if (time === 'sunset') { freq1 = 68; freq2 = 102; noiseLevel = 0.06; }
+      if (time === 'night') { freq1 = 58; freq2 = 92; noiseLevel = 0.09; }
+      const osc = audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.value = freq1;
+      const g1 = audioCtx.createGain(); g1.gain.value = 0.28; osc.connect(g1); g1.connect(master); osc.start();
+      const osc2 = audioCtx.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = freq2;
+      const g2 = audioCtx.createGain(); g2.gain.value = 0.12; osc2.connect(g2); g2.connect(master); osc2.start();
+      const bufferSize = 2 * audioCtx.sampleRate;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.35;
+      const noise = audioCtx.createBufferSource(); noise.buffer = noiseBuffer; noise.loop = true;
+      const filter = audioCtx.createBiquadFilter(); filter.type = 'bandpass';
+      filter.frequency.value = time === 'night' ? 1200 : 1800; filter.Q.value = 0.6;
+      const ng = audioCtx.createGain(); ng.gain.value = noiseLevel;
+      noise.connect(filter); filter.connect(ng); ng.connect(master); noise.start();
+      ambientNodes = { master, osc, osc2, noise };
+    }
+
+    window.updateAmbientForTime = function(time) {
+      if (soundOn && ambientNodes) createAmbient(time);
+    };
+
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
@@ -205,13 +248,30 @@
       });
     }
     window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
     function enableSound() {
-      if (!player || typeof player.playVideo !== 'function') { setTimeout(enableSound, 400); return; }
+      initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const time = getTimeOfDay();
+      createAmbient(time);
+      if (player && typeof player.playVideo === 'function') {
+        player.unMute(); player.setVolume(38); player.playVideo();
+      } else {
+        setTimeout(() => {
+          if (player && typeof player.playVideo === 'function' && soundOn) {
+            player.unMute(); player.setVolume(38); player.playVideo();
+          }
+        }, 800);
+      }
       soundOn = true; soundIcon.textContent = '🔊'; soundToggle.classList.add('sound-on');
-      player.unMute(); player.setVolume(45); player.playVideo();
     }
     function disableSound() {
       soundOn = false; soundIcon.textContent = '🔇'; soundToggle.classList.remove('sound-on');
+      if (ambientNodes) {
+        ambientNodes.master.gain.value = 0;
+        try { ambientNodes.osc.stop(); ambientNodes.osc2.stop(); ambientNodes.noise.stop(); } catch(e) {}
+        ambientNodes = null;
+      }
       if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
     }
     soundToggle.addEventListener('click', () => { if (soundOn) disableSound(); else enableSound(); });
